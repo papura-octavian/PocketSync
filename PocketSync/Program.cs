@@ -11,11 +11,20 @@ app.UseStaticFiles(); // wwwroot
 app.MapGet("/api/status", () => new { ok = true, version = "0.1" });
 
 // Create the path for the transfered files
-var basePath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-basePath = Path.Combine(basePath, "PocketSync");
-Directory.CreateDirectory(basePath);
-// Console.WriteLine(basePath);
+var configFolder = builder.Configuration["PocketSync:StorageFolder"];
 
+string basePath;
+if (string.IsNullOrEmpty(configFolder))
+{
+    basePath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+    basePath = Path.Combine(basePath, "PocketSync");
+}
+else
+{
+    basePath = configFolder;
+}
+
+Directory.CreateDirectory(basePath);
 
 // Create POST API
 app.MapPost("/api/upload", async (HttpRequest request) =>
