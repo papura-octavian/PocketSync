@@ -34,6 +34,9 @@
 
             xhr.upload.addEventListener("progress", (e) => {
                 bar.value = (e.loaded / e.total) * 100;
+                const seconds= (Date.now() - start) / 1000;
+                const mbps = (e.loaded / 1024 / 1024) / seconds;
+                status.textContent = "Sending... " + mbps.toFixed(1) + " MB/s";
             });
 
             xhr.addEventListener("load", () => {
@@ -45,6 +48,9 @@
             });
 
             xhr.open("POST", "api/upload");
+
+            const start = Date.now();
+
             xhr.send(fd);
         });
 
