@@ -9,10 +9,12 @@
     <input type="file" id="file" />
     <button id="send">Send</button>
     <div id="status"></div>
+    <progress id="bar" value="0" max="100"> </progress>
     <script>
         const btn = document.getElementById("send");
         const input = document.getElementById("file");
         const status = document.getElementById("status");
+        const bar = document.getElementById("bar");
 
         btn.addEventListener("click", async () => {
             const file = input.files[0];
@@ -28,12 +30,22 @@
 
             fd.append("file", file);
 
-            const response = await fetch("api/upload", { method: "POST", body: fd });
-            if (response.ok) {
-                status.textContent = "Done : " + file.name;
-            } else {
-                status.textContent = "Error : " + response.status;
-            }
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener("progress", (e) => {
+                bar.value = (e.loaded / e.total) * 100;
+            });
+
+            xhr.addEventListener("load", () => {
+                if (xhr.status === 200) {
+                    status.textContent = "Done : " + file.name;
+                } else {
+                    status.textContent = "Error : " + xhr.status;
+                }
+            });
+
+            xhr.open("POST", "api/upload");
+            xhr.send(fd);
         });
 
     </script> 

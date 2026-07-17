@@ -30,11 +30,41 @@ app.MapPost("/api/upload", async (HttpRequest request) =>
     if (fileSection is null)
         return Results.BadRequest("No File sent");
 
-    var path = Path.Combine(basePath, fileSection.FileName);
+    // tower 1
+    var fileName = Path.GetFileName(fileSection.FileName);
+
+    // cleaning the name, android uses ? and : which is deadly in windows >:( 
+    foreach (var ch in Path.GetInvalidFileNameChars())
+    {
+        fileName = fileName.Replace(ch, '_');
+    }
+
+    var path = Path.Combine(basePath, fileName);
+
+    // verify for existing filename
+    if(File.Exists(path))
+    {
+        var extension = Path.GetExtension(fileName);
+        fileName = Path.GetFileNameWithoutExtension(fileName);
+
+        fileName = fileName + "_" + DateTime.Now.Ticks + extension;
+
+        path = Path.Combine(basePath, fileName);
+    }
+
+    // tower 2
+    path = Path.GetFullPath(path);
+
+    if(path.StartsWith(basePath) == false)
+    {
+        return Results.BadRequest();
+    }
+
     using var stream = File.Create(path);
     await fileSection.FileStream!.CopyToAsync(stream);
 
     return Results.Ok();
+
 }).DisableAntiforgery();
 
 
