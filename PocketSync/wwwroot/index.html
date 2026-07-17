@@ -9,5 +9,33 @@
     <input type="file" id="file" />
     <button id="send">Send</button>
     <div id="status"></div>
+    <script>
+        const btn = document.getElementById("send");
+        const input = document.getElementById("file");
+        const status = document.getElementById("status");
+
+        btn.addEventListener("click", async () => {
+            const file = input.files[0];
+
+            if (!file) {
+                status.textContent = "Choose a file First";
+                return;
+            }
+
+            status.textContent = "Sending...";
+
+            const fd = new FormData();
+
+            fd.append("file", file);
+
+            const response = await fetch("api/upload", { method: "POST", body: fd });
+            if (response.ok) {
+                status.textContent = "Done : " + file.name;
+            } else {
+                status.textContent = "Error : " + response.status;
+            }
+        });
+
+    </script> 
 </body>
 </html>
