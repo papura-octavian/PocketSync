@@ -10,6 +10,9 @@
     <button id="send">Send</button>
     <div id="status"></div>
     <progress id="bar" value="0" max="100"> </progress>
+    <h2>PC Files</h2>
+    <button id="refresh">refresh</button>
+    <ul id="list"></ul>
     <script>
         const btn = document.getElementById("send");
         const input = document.getElementById("file");
@@ -53,6 +56,28 @@
 
             xhr.send(fd);
         });
+
+        const list = document.getElementById("list");
+        const refresh = document.getElementById("refresh");
+
+        async function loadFiles() {
+            const response = await fetch("api/files");
+            const files = await response.json();
+
+            list.innerHTML = "";
+
+            for (const f of files) {
+                const li = document.createElement("li");
+                const a = document.createElement("a");
+                a.href = "api/files/" + f.id + "/download";
+                a.textContent = f.name;
+                li.appendChild(a);
+                list.appendChild(li);
+            }
+        }
+
+        refresh.addEventListener("click", loadFiles);
+        loadFiles();
 
     </script> 
 </body>

@@ -24,7 +24,13 @@ else
     basePath = configFolder;
 }
 
-Directory.CreateDirectory(basePath);
+var receivedDir = Path.Combine(basePath, "Received");
+var storageDir = Path.Combine(basePath, "Storage");
+
+Directory.CreateDirectory(receivedDir);
+Directory.CreateDirectory(storageDir);
+
+var fileMap = new Dictionary<Guid, string>();
 
 // Create POST API
 app.MapPost("/api/upload", async (HttpRequest request) =>
@@ -48,7 +54,8 @@ app.MapPost("/api/upload", async (HttpRequest request) =>
         fileName = fileName.Replace(ch, '_');
     }
 
-    var path = Path.Combine(basePath, fileName);
+    // add the filename to the path
+    var path = Path.Combine(receivedDir, fileName);
 
     // verify for existing filename
     if(File.Exists(path))
@@ -58,7 +65,7 @@ app.MapPost("/api/upload", async (HttpRequest request) =>
 
         fileName = fileName + "_" + DateTime.Now.Ticks + extension;
 
-        path = Path.Combine(basePath, fileName);
+        path = Path.Combine(receivedDir, fileName);
     }
 
     // tower 2
@@ -76,5 +83,29 @@ app.MapPost("/api/upload", async (HttpRequest request) =>
 
 }).DisableAntiforgery();
 
+app.MapGet("/api/files", () =>
+{
+    fileMap.Clear();
+    var files = new DirectoryInfo(storageDir).GetFiles();
+
+    return files.Select(f =>
+    {
+        var id = Guid.NewGuid();
+        fileMap[id] = f.FullName;
+        return new FileItemDto(id, f.Name, f.Length, f.LastWriteTimeUtc);
+    }).ToList();
+});
+
+app.MapGet("/api/files/{id}/download", (Guid id) => 
+{
+    if (!fileMap.TryGetValue(id, out var path))
+    {
+        return Results.NotFound();
+    }
+
+    return Results.File(path, "application/octet-stream", Path.GetFileName(path));
+});
 
 app.Run();
+
+record FileItemDto(Guid Id, string Name, long SizeBytes, DateTime ModifiedUtc);
