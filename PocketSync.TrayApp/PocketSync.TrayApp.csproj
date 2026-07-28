@@ -24,4 +24,11 @@
     <PackageReference Include="Serilog.Sinks.File" Version="6.*" />
   </ItemGroup>
 
+  <!-- la build, wwwroot curge tranzitiv din proiectul referit; la publish nu — îl includem explicit -->
+  <ItemGroup>
+    <Content Include="..\PocketSync\wwwroot\**"
+             Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)"
+             CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
