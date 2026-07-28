@@ -75,6 +75,19 @@ public sealed class ApiService
     /// <summary>Link de download deschis în browser — cu ?token= ca să treacă de auth fără cookie.</summary>
     public string DownloadUrl(Guid id) => $"{BaseUrl}/api/files/{id}/download?token={Token}";
 
+    /// <summary>Comandă de putere (lock/sleep/restart/shutdown/abort). Întoarce mesajul serverului.</summary>
+    public async Task<string> PowerAsync(string action)
+    {
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        var response = await _http.PostAsync($"{BaseUrl}/api/power/{action}", null, cts.Token);
+        response.EnsureSuccessStatusCode();
+
+        var json = await response.Content.ReadAsStringAsync(cts.Token);
+        using var doc = JsonDocument.Parse(json);
+        return doc.RootElement.TryGetProperty("message", out var m)
+            ? m.GetString() ?? "OK" : "OK";
+    }
+
     public async Task UploadAsync(Stream source, string fileName, long? length,
         IProgress<(long Sent, long Total)>? progress, CancellationToken ct = default)
     {

@@ -9,7 +9,13 @@
     <!-- WinForms pentru NotifyIcon (tray + balloon tips) și FolderBrowserDialog -->
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\Photos\Icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <!-- iconul e citit la runtime pentru tray si fereastra -->
+  <ItemGroup>
+    <None Include="..\Photos\Icon.ico" Link="Icon.ico" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

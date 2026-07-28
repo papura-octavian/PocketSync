@@ -15,6 +15,10 @@ public partial class MainWindow : Window
         _app = app;
         InitializeComponent();
 
+        var icoPath = System.IO.Path.Combine(AppContext.BaseDirectory, "Icon.ico");
+        if (System.IO.File.Exists(icoPath))
+            Icon = System.Windows.Media.Imaging.BitmapFrame.Create(new Uri(icoPath));
+
         _app.Server.FileReceived += OnFileReceived;
         RefreshInfo();
         AutoStartCheck.IsChecked = AutoStart.IsEnabled();

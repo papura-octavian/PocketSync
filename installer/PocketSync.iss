@@ -23,6 +23,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 ; admin: necesar pentru Program Files si regula de firewall
 PrivilegesRequired=admin
 WizardStyle=modern
+SetupIconFile=..\Photos\Icon.ico
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

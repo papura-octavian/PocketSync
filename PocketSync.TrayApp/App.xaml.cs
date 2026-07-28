@@ -126,9 +126,16 @@ public partial class App : System.Windows.Application
         Log.Information("Server repornit: folder {Folder}", Server.BasePath);
     }
 
-    /// <summary>Icon desenat la runtime — fără fișier .ico de întreținut.</summary>
     private static Icon CreateIcon()
     {
+        // iconul aplicației, copiat lângă exe; fallback pe unul desenat dacă lipsește
+        var icoPath = Path.Combine(AppContext.BaseDirectory, "Icon.ico");
+        if (File.Exists(icoPath))
+        {
+            try { return new Icon(icoPath); }
+            catch { /* fișier corupt — cădem pe fallback */ }
+        }
+
         using var bmp = new Bitmap(32, 32);
         using var g = Graphics.FromImage(bmp);
         g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;

@@ -18,7 +18,7 @@
         </VerticalStackLayout>
 
         <!-- ============ starea: pairat ============ -->
-        <Grid x:Name="MainPanel" RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="10" IsVisible="False">
+        <Grid x:Name="MainPanel" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" RowSpacing="10" IsVisible="False">
 
             <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                 <Ellipse Grid.Column="0" x:Name="StatusDot" WidthRequest="12" HeightRequest="12"
@@ -57,7 +57,30 @@
                 </CollectionView>
             </RefreshView>
 
-            <Button Grid.Row="4" Text="Deconectează" Clicked="Unpair_Clicked"
+            <!-- comenzi PC: aceleași ca în pagina web -->
+            <VerticalStackLayout Grid.Row="4" Spacing="6">
+                <Label Text="COMENZI PC" FontSize="11" TextColor="Gray" CharacterSpacing="1.2"/>
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="6" RowSpacing="6">
+                    <Button Grid.Row="0" Grid.Column="0" Text="🔒 Blochează"
+                            Clicked="Power_Clicked" ClassId="lock"
+                            BackgroundColor="Transparent" BorderColor="Gray" BorderWidth="1" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                    <Button Grid.Row="0" Grid.Column="1" Text="🌙 Sleep"
+                            Clicked="Power_Clicked" ClassId="sleep"
+                            BackgroundColor="Transparent" BorderColor="Gray" BorderWidth="1" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
+                    <Button Grid.Row="1" Grid.Column="0" Text="🔄 Restart"
+                            Clicked="Power_Clicked" ClassId="restart"
+                            BackgroundColor="Transparent" BorderColor="#dc2626" BorderWidth="1" TextColor="#dc2626"/>
+                    <Button Grid.Row="1" Grid.Column="1" Text="⏻ Închide"
+                            Clicked="Power_Clicked" ClassId="shutdown"
+                            BackgroundColor="Transparent" BorderColor="#dc2626" BorderWidth="1" TextColor="#dc2626"/>
+                    <Button Grid.Row="2" Grid.ColumnSpan="2" x:Name="AbortButton" Text="✋ Anulează închiderea"
+                            Clicked="Power_Clicked" ClassId="abort"
+                            BackgroundColor="#dc2626" TextColor="White" IsVisible="False"/>
+                </Grid>
+                <Label x:Name="PowerMsg" FontSize="13" TextColor="Gray"/>
+            </VerticalStackLayout>
+
+            <Button Grid.Row="5" Text="Deconectează" Clicked="Unpair_Clicked"
                     BackgroundColor="Transparent" TextColor="Red" FontSize="13"/>
         </Grid>
 

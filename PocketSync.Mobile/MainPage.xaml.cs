@@ -188,6 +188,35 @@ public partial class MainPage : ContentPage
         }
     }
 
+    // ---------------- comenzi PC ----------------
+
+    private async void Power_Clicked(object? sender, EventArgs e)
+    {
+        if (sender is not Button btn) return;
+        var action = btn.ClassId;
+
+        var confirmText = action switch
+        {
+            "shutdown" => "Sigur închizi PC-ul?",
+            "restart" => "Sigur repornești PC-ul?",
+            "sleep" => "PC-ul intră în sleep. Continui?",
+            _ => null // lock și abort sunt inofensive
+        };
+        if (confirmText is not null &&
+            !await DisplayAlertAsync("PocketSync", confirmText, "Da", "Nu")) return;
+
+        try
+        {
+            PowerMsg.Text = await _api.PowerAsync(action);
+            // la shutdown/restart ai 15 secunde de răzgândit
+            AbortButton.IsVisible = action is "shutdown" or "restart";
+        }
+        catch (Exception ex)
+        {
+            PowerMsg.Text = "Eroare: " + ex.Message;
+        }
+    }
+
     private static string FormatSize(long bytes) => bytes switch
     {
         < 1024 => $"{bytes} B",
