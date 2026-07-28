@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="PocketSync.Mobile/PocketSync.Mobile.csproj" />
   <Project Path="PocketSync.TrayApp/PocketSync.TrayApp.csproj" />
   <Project Path="PocketSync/PocketSync.csproj" />
 </Solution>

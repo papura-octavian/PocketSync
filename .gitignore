@@ -368,3 +368,4 @@ MigrationBackup/
 FodyWeavers.xsd
 # PocketSync build artifacts
 installer/output/
+publish/

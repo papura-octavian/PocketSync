@@ -13,11 +13,11 @@ Fazele sunt ordonate ca **felii verticale**: fiecare fază se termină cu ceva c
 | Fază | Ce ai la final | Status |
 |---|---|---|
 | [[00-arhitectura]] | Înțelegi cum și de ce | 📖 citește întâi |
-| [[01-faza-1-telefon-catre-pc]] | Trimiți un fișier de pe telefon pe PC, din browser | ⬜ |
-| [[02-faza-2-pc-catre-telefon]] | Vezi fișierele de pe PC și le descarci pe telefon | ⬜ |
-| [[03-faza-3-securitate-si-pairing]] | Token + QR code, nu mai intră oricine de pe WiFi | ⬜ |
-| [[04-faza-4-tray-app]] | Aplicație reală cu icon în tray, pornește cu Windows | ⬜ |
-| [[05-faza-5-app-android]] | Aplicație nativă cu share sheet | ⬜ |
+| [[01-faza-1-telefon-catre-pc]] | Trimiți un fișier de pe telefon pe PC, din browser | ✅ testat pe telefon |
+| [[02-faza-2-pc-catre-telefon]] | Vezi fișierele de pe PC și le descarci pe telefon | ✅ testat pe telefon |
+| [[03-faza-3-securitate-si-pairing]] | Token + QR code, nu mai intră oricine de pe WiFi | 🔶 implementat, de testat pe telefon |
+| [[04-faza-4-tray-app]] | Aplicație reală cu icon în tray, pornește cu Windows | 🔶 implementat, de testat pe telefon |
+| [[05-faza-5-app-android]] | Aplicație nativă cu share sheet | 🔶 implementat, de testat pe telefon |
 | [[06-backlog]] | iOS, comenzi PC, acces din afara casei, etc. | 💭 idei |
 
 ## Regula de bază a proiectului
