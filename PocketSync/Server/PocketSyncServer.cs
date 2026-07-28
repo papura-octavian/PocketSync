@@ -113,10 +113,14 @@ public sealed class PocketSyncServer
                 if (HttpMethods.IsGet(ctx.Request.Method) && !path.StartsWithSegments("/api"))
                 {
                     // mută tokenul în cookie și scoate-l din URL (istoric, Referer, sync)
+                    // Lax, nu Strict: navigarea din aplicația de cameră e "externally initiated",
+                    // iar Chrome nu trimite cookie-uri Strict pe redirect-ul care urmează —
+                    // pairing-ul prin QR ar da 401 deși tokenul e corect.
+                    // Lax tot blochează POST-urile cross-site (protecția CSRF care contează).
                     ctx.Response.Cookies.Append("ps_auth", Tokens.Token, new CookieOptions
                     {
                         HttpOnly = true,
-                        SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict,
+                        SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax,
                         MaxAge = TimeSpan.FromDays(365)
                     });
                     ctx.Response.Redirect(path.HasValue ? path.Value! : "/");
