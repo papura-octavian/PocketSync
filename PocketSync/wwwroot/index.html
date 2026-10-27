@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>PocketSync</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <style>
         :root {
             --bg: #eef1f6; --card: #ffffff; --text: #16181d; --muted: #6b7280;
@@ -34,9 +36,6 @@
         header { display: flex; align-items: center; gap: .65rem; padding: .5rem .25rem 1.1rem; }
         .logo {
             width: 2.2rem; height: 2.2rem; border-radius: .7rem; flex: none;
-            background: linear-gradient(135deg, var(--accent), #7c3aed);
-            display: grid; place-items: center;
-            color: #fff; font-weight: 800; font-size: 1.15rem;
             box-shadow: var(--shadow);
         }
         header h1 { font-size: 1.25rem; letter-spacing: -.01em; }
@@ -132,7 +131,7 @@
 </head>
 <body>
     <header>
-        <div class="logo">P</div>
+        <img class="logo" src="apple-touch-icon.png" alt="">
         <div>
             <h1>PocketSync</h1>
             <div class="sub"><span class="dot"></span><span id="pcName">conectat</span></div>
