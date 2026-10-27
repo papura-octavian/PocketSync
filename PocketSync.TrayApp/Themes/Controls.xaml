@@ -5,11 +5,6 @@
 
     <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
-    <LinearGradientBrush x:Key="LogoGradient" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Color="#B46FD0" Offset="0"/>
-        <GradientStop Color="#5B7FE0" Offset="1"/>
-    </LinearGradientBrush>
-
     <!-- ============ text ============ -->
 
     <Style x:Key="Text" TargetType="TextBlock">

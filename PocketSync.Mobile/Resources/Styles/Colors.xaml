@@ -5,11 +5,11 @@
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <!-- paleta PocketSync: violet → albastru, din iconul aplicației -->
+    <!-- paleta PocketSync: albastru → violet, din iconul aplicației -->
     <Color x:Key="Accent">#6366F1</Color>
     <Color x:Key="AccentLight">#8B8DF7</Color>
-    <Color x:Key="GradientStart">#B46FD0</Color>
-    <Color x:Key="GradientEnd">#5B7FE0</Color>
+    <Color x:Key="GradientStart">#3B82F6</Color>
+    <Color x:Key="GradientEnd">#7C3AED</Color>
 
     <Color x:Key="BgLight">#F4F5FA</Color>
     <Color x:Key="BgDark">#0E1015</Color>
