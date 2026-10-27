@@ -18,7 +18,42 @@ public class MainActivity : MauiAppCompatActivity
     protected override void OnCreate(Bundle? savedInstanceState)
     {
         base.OnCreate(savedInstanceState);
+        ApplySystemBarStyle();
         HandleShareIntent(Intent);
+    }
+
+    protected override void OnResume()
+    {
+        base.OnResume();
+        ApplySystemBarStyle();
+    }
+
+    public override void OnConfigurationChanged(Android.Content.Res.Configuration newConfig)
+    {
+        base.OnConfigurationChanged(newConfig);
+        ApplySystemBarStyle(); // s-a schimbat tema light/dark din setările telefonului
+    }
+
+    /// <summary>
+    /// Bara de sus (ceas, baterie) și cea de jos în culoarea fundalului aplicației,
+    /// cu iconițe închise pe tema light și deschise pe dark — altfel ies alb pe alb.
+    /// </summary>
+    private void ApplySystemBarStyle()
+    {
+        if (Window is null) return;
+        var dark = (Resources?.Configuration?.UiMode & Android.Content.Res.UiMode.NightMask)
+                   == Android.Content.Res.UiMode.NightYes;
+
+#pragma warning disable CA1422 // ignorate de la Android 15 (edge-to-edge), dar necesare pe versiunile vechi
+        var background = Android.Graphics.Color.ParseColor(dark ? "#0E1015" : "#F4F5FA");
+        Window.SetStatusBarColor(background);
+        Window.SetNavigationBarColor(background);
+#pragma warning restore CA1422
+
+        var controller = AndroidX.Core.View.WindowCompat.GetInsetsController(Window, Window.DecorView);
+        if (controller is null) return;
+        controller.AppearanceLightStatusBars = !dark;
+        controller.AppearanceLightNavigationBars = !dark;
     }
 
     protected override void OnNewIntent(Intent? intent)

@@ -2,7 +2,7 @@
 ; Compilare: ISCC.exe PocketSync.iss (din folderul installer\)
 
 #define AppName "PocketSync"
-#define AppVersion "1.0.0"
+#define AppVersion "1.1.0"
 #define AppExe "PocketSync.TrayApp.exe"
 #define AppPort "5000"
 

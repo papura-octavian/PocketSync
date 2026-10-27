@@ -1,87 +1,287 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:PocketSync.Mobile"
              x:Class="PocketSync.Mobile.MainPage"
+             Shell.NavBarIsVisible="False"
+             SafeAreaEdges="Container"
              Title="PocketSync">
 
-    <Grid Padding="16">
+    <Grid>
 
-        <!-- ============ starea: nepairat ============ -->
-        <VerticalStackLayout x:Name="PairPanel" Spacing="12" VerticalOptions="Center" IsVisible="False">
-            <Label Text="PocketSync" FontSize="28" FontAttributes="Bold" HorizontalOptions="Center"/>
-            <Label Text="Conectează-te la PC-ul tău:" HorizontalOptions="Center"/>
-            <Label Text="1. Deschide PocketSync pe PC (fereastra cu QR)&#10;2. Apasă «Copiază link» pe PC și trimite-ți link-ul&#10;3. Lipește-l aici"
-                   FontSize="13" TextColor="Gray"/>
-            <Entry x:Name="PairingUrlEntry" Placeholder="http://192.168.x.x:5000/?token=..."/>
-            <Button x:Name="PairButton" Text="Conectează" Clicked="Pair_Clicked"/>
-            <Label x:Name="PairError" TextColor="Red" IsVisible="False"/>
-        </VerticalStackLayout>
+        <!-- ============ niciun PC legat: ecran de bun venit ============ -->
+        <ScrollView x:Name="WelcomePanel" IsVisible="False">
+            <VerticalStackLayout Padding="24,40,24,32" Spacing="22" VerticalOptions="Center">
 
-        <!-- ============ starea: pairat ============ -->
-        <Grid x:Name="MainPanel" RowDefinitions="Auto,Auto,Auto,*,Auto,Auto" RowSpacing="10" IsVisible="False">
+                <Border StrokeThickness="0" StrokeShape="RoundRectangle 28" HorizontalOptions="Center"
+                        WidthRequest="104" HeightRequest="104">
+                    <Border.Shadow>
+                        <Shadow Brush="{StaticResource GradientEndBrush}" Opacity="0.35" Radius="24" Offset="0,8" />
+                    </Border.Shadow>
+                    <Image Source="pocketsync_logo.png" Aspect="AspectFill" />
+                </Border>
 
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-                <Ellipse Grid.Column="0" x:Name="StatusDot" WidthRequest="12" HeightRequest="12"
-                         Fill="Gray" VerticalOptions="Center"/>
-                <Label Grid.Column="1" x:Name="StatusLabel" Text="Se verifică..." VerticalOptions="Center"/>
-                <Button Grid.Column="2" Text="⟳" Clicked="Refresh_Clicked" Padding="12,2"/>
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Bun venit în PocketSync" Style="{StaticResource Title}" HorizontalTextAlignment="Center" />
+                    <Label Text="Trimite fișiere între telefon și PC-urile tale, direct prin WiFi. Fără cloud, fără cabluri."
+                           Style="{StaticResource Muted}" FontSize="15" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <Border Style="{StaticResource Card}" Padding="18">
+                    <VerticalStackLayout Spacing="16">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="32" HeightRequest="32" StrokeShape="RoundRectangle 16">
+                                <Label Text="1" FontFamily="OpenSansSemibold" TextColor="{StaticResource Accent}"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Pornește PocketSync pe PC" VerticalOptions="Center" FontSize="15" />
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="32" HeightRequest="32" StrokeShape="RoundRectangle 16">
+                                <Label Text="2" FontFamily="OpenSansSemibold" TextColor="{StaticResource Accent}"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Apasă „Adaugă un PC” mai jos" VerticalOptions="Center" FontSize="15" />
+                        </Grid>
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="32" HeightRequest="32" StrokeShape="RoundRectangle 16">
+                                <Label Text="3" FontFamily="OpenSansSemibold" TextColor="{StaticResource Accent}"
+                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                            </Border>
+                            <Label Grid.Column="1" Text="Scanează codul QR din fereastra PocketSync" VerticalOptions="Center" FontSize="15" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="Adaugă un PC" Style="{StaticResource PrimaryButton}" Clicked="AddPc_Clicked" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- ============ cel puțin un PC legat ============ -->
+        <Grid x:Name="MainPanel" RowDefinitions="Auto,*" IsVisible="False">
+
+            <!-- antet: PC-ul activ (tap = schimbi PC-ul) + buton către lista de PC-uri -->
+            <Grid Padding="20,14,20,6" ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                    <VerticalStackLayout.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="PcPicker_Tapped" />
+                    </VerticalStackLayout.GestureRecognizers>
+                    <Label Text="CONECTAT LA" Style="{StaticResource Overline}" />
+                    <HorizontalStackLayout Spacing="6">
+                        <Label x:Name="PcNameLabel" Style="{StaticResource Title}" FontSize="24"
+                               LineBreakMode="TailTruncation" MaximumWidthRequest="260" />
+                        <Path Style="{StaticResource MutedIcon}" Data="M6 9 L12 15 L18 9" Margin="0,4,0,0" />
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="6">
+                        <Ellipse x:Name="StatusDot" WidthRequest="8" HeightRequest="8" Fill="Gray" VerticalOptions="Center" />
+                        <Label x:Name="StatusLabel" Text="Se verifică..." Style="{StaticResource Muted}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+
+                <Border Grid.Column="1" Style="{StaticResource IconButton}" WidthRequest="48" HeightRequest="48"
+                        StrokeShape="RoundRectangle 24" VerticalOptions="Center">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="Devices_Tapped" />
+                    </Border.GestureRecognizers>
+                    <Path Style="{StaticResource Icon}"
+                          Data="M4 6 C4 4.9 4.9 4 6 4 L18 4 C19.1 4 20 4.9 20 6 L20 15 L4 15 Z M2 19 L22 19" />
+                </Border>
             </Grid>
 
-            <Button Grid.Row="1" x:Name="UploadButton" Text="＋ Trimite fișiere pe PC" Clicked="Upload_Clicked"/>
-
-            <VerticalStackLayout Grid.Row="2" Spacing="4">
-                <ProgressBar x:Name="UploadProgress" IsVisible="False"/>
-                <Label x:Name="UploadStatus" FontSize="13" TextColor="Gray" IsVisible="False"/>
-            </VerticalStackLayout>
-
-            <RefreshView Grid.Row="3" x:Name="ListRefresh" Refreshing="ListRefresh_Refreshing">
+            <RefreshView Grid.Row="1" x:Name="ListRefresh" Refreshing="ListRefresh_Refreshing"
+                         RefreshColor="{StaticResource Accent}">
                 <CollectionView x:Name="FilesList" SelectionMode="None">
-                    <CollectionView.EmptyView>
-                        <Label Text="Niciun fișier în Storage pe PC." TextColor="Gray"
-                               HorizontalOptions="Center" VerticalOptions="Center"/>
-                    </CollectionView.EmptyView>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid Padding="4,10" ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="File_Tapped"/>
-                                </Grid.GestureRecognizers>
-                                <VerticalStackLayout Grid.Column="0" Spacing="2">
-                                    <Label Text="{Binding Name}" LineBreakMode="TailTruncation"/>
-                                    <Label Text="{Binding Meta}" FontSize="12" TextColor="Gray"/>
+
+                    <CollectionView.Header>
+                        <VerticalStackLayout Padding="20,10,20,4" Spacing="18">
+
+                            <!-- cardul principal: trimite pe PC -->
+                            <Border Background="{StaticResource HeroGradient}" StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 26" Padding="20">
+                                <Border.Shadow>
+                                    <Shadow Brush="{StaticResource GradientEndBrush}" Opacity="0.30" Radius="20" Offset="0,8" />
+                                </Border.Shadow>
+                                <VerticalStackLayout Spacing="16">
+                                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                        <VerticalStackLayout Spacing="4">
+                                            <Label Text="Trimite pe PC" TextColor="White" FontFamily="OpenSansSemibold"
+                                                   FontSize="22" FontAttributes="Bold" />
+                                            <Label Text="Poze, video, documente — orice fișier." TextColor="White"
+                                                   Opacity="0.85" FontSize="14" />
+                                        </VerticalStackLayout>
+                                        <Border Grid.Column="1" BackgroundColor="#33FFFFFF" StrokeThickness="0"
+                                                StrokeShape="RoundRectangle 18" WidthRequest="52" HeightRequest="52"
+                                                VerticalOptions="Start">
+                                            <Path Style="{StaticResource Icon}" Stroke="White"
+                                                  Data="M21 15 L21 19 C21 20.1 20.1 21 19 21 L5 21 C3.9 21 3 20.1 3 19 L3 15 M17 8 L12 3 L7 8 M12 3 L12 15" />
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- progresul transferului, în locul butonului cât timp se trimite -->
+                                    <VerticalStackLayout x:Name="UploadPanel" Spacing="8" IsVisible="False">
+                                        <Label x:Name="UploadStatus" TextColor="White" FontSize="14"
+                                               LineBreakMode="TailTruncation" FontFamily="OpenSansSemibold" />
+                                        <ProgressBar x:Name="UploadProgress" ProgressColor="White" BackgroundColor="#40FFFFFF" />
+                                        <Label x:Name="UploadDetail" TextColor="White" Opacity="0.85" FontSize="12" />
+                                    </VerticalStackLayout>
+
+                                    <Button x:Name="UploadButton" Text="Alege fișiere" Style="{StaticResource HeroButton}"
+                                            Clicked="Upload_Clicked" HorizontalOptions="Fill" />
+
+                                    <Label x:Name="UploadResult" TextColor="White" FontSize="13" IsVisible="False"
+                                           HorizontalTextAlignment="Center" />
                                 </VerticalStackLayout>
-                                <Label Grid.Column="1" Text="⬇" FontSize="20" VerticalOptions="Center"/>
+                            </Border>
+
+                            <!-- PC-ul nu răspunde / token expirat -->
+                            <Border x:Name="OfflinePanel" Style="{StaticResource Card}" IsVisible="False"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource DangerSoftLight}, Dark={StaticResource DangerSoftDark}}"
+                                    Stroke="Transparent">
+                                <VerticalStackLayout Spacing="12">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                        <Path Style="{StaticResource Icon}" Stroke="{StaticResource Danger}" VerticalOptions="Start"
+                                              Data="M12 9 L12 13 M12 17 L12.01 17 M10.3 3.9 L1.8 18 C1.1 19.3 2 21 3.5 21 L20.5 21 C22 21 22.9 19.3 22.2 18 L13.7 3.9 C13 2.6 11 2.6 10.3 3.9 Z" />
+                                        <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                            <Label x:Name="OfflineTitle" Text="PC-ul nu răspunde" Style="{StaticResource ItemTitle}" />
+                                            <Label x:Name="OfflineText" Style="{StaticResource Muted}"
+                                                   Text="Verifică să fie pornit PocketSync pe PC și să fiți pe același WiFi." />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                        <Button Text="Reîncearcă" Style="{StaticResource SecondaryButton}" Clicked="Retry_Clicked" />
+                                        <Button Grid.Column="1" Text="Scanează din nou" Style="{StaticResource SecondaryButton}"
+                                                Clicked="Rescan_Clicked" />
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <Grid ColumnDefinitions="*,Auto" Margin="2,4,0,0">
+                                <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                    <Label Text="Fișiere pe PC" Style="{StaticResource Heading}" />
+                                    <Label x:Name="FilesHint" Text="Din folderul Storage. Atinge ca să descarci."
+                                           Style="{StaticResource Muted}" FontSize="12" />
+                                </VerticalStackLayout>
+                                <Border Grid.Column="1" Style="{StaticResource IconButton}" VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="Refresh_Tapped" />
+                                    </Border.GestureRecognizers>
+                                    <Path Style="{StaticResource Icon}" Scale="0.8"
+                                          Data="M3 12 A9 9 0 0 1 12 3 A9.75 9.75 0 0 1 18.74 5.74 L21 8 M21 3 L21 8 L16 8 M21 12 A9 9 0 0 1 12 21 A9.75 9.75 0 0 1 5.26 18.26 L3 16 M8 16 L3 16 L3 21" />
+                                </Border>
+                            </Grid>
+                            <!-- listă goală: card propriu în header (EmptyView diferă între platforme) -->
+                            <Border x:Name="EmptyCard" Style="{StaticResource Card}" Padding="24,22" IsVisible="False">
+                                <VerticalStackLayout Spacing="10">
+                                    <Border Style="{StaticResource IconTile}" WidthRequest="56" HeightRequest="56"
+                                            StrokeShape="RoundRectangle 18" HorizontalOptions="Center">
+                                        <Path Style="{StaticResource AccentIcon}"
+                                              Data="M4 20 L20 20 C21.1 20 22 19.1 22 18 L22 8 C22 6.9 21.1 6 20 6 L12 6 L10 3 L4 3 C2.9 3 2 3.9 2 5 L2 18 C2 19.1 2.9 20 4 20 Z" />
+                                    </Border>
+                                    <Label x:Name="EmptyTitle" Text="Nimic aici deocamdată" Style="{StaticResource ItemTitle}"
+                                           HorizontalOptions="Center" />
+                                    <Label x:Name="EmptyText" Style="{StaticResource Muted}" HorizontalTextAlignment="Center"
+                                           Text="Pune fișiere în folderul Storage de pe PC și apar aici, gata de descărcat." />
+                                </VerticalStackLayout>
+                            </Border>
+                        </VerticalStackLayout>
+                    </CollectionView.Header>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="local:FileRow">
+                            <Grid Padding="20,5">
+                                <SwipeView BackgroundColor="Transparent">
+                                    <SwipeView.RightItems>
+                                        <SwipeItems Mode="Reveal">
+                                            <SwipeItemView Invoked="DeleteFile_Invoked">
+                                                <Border BackgroundColor="{StaticResource Danger}" StrokeThickness="0"
+                                                        StrokeShape="RoundRectangle 18" WidthRequest="84" Margin="8,0,0,0">
+                                                    <VerticalStackLayout VerticalOptions="Center" Spacing="2">
+                                                        <Path Style="{StaticResource Icon}" Stroke="White" Scale="0.85"
+                                                              Data="M3 6 L21 6 M19 6 L19 20 C19 21 18 22 17 22 L7 22 C6 22 5 21 5 20 L5 6 M8 6 L8 4 C8 3 9 2 10 2 L14 2 C15 2 16 3 16 4 L16 6" />
+                                                        <Label Text="Șterge" TextColor="White" FontSize="12" HorizontalOptions="Center" />
+                                                    </VerticalStackLayout>
+                                                </Border>
+                                            </SwipeItemView>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+
+                                    <Border Style="{StaticResource Card}" Padding="12" StrokeShape="RoundRectangle 18">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="File_Tapped" />
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                            <Border Style="{StaticResource IconTile}">
+                                                <Label Text="{Binding Ext}" FontFamily="OpenSansSemibold" FontSize="11"
+                                                       TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentLight}}"
+                                                       HorizontalOptions="Center" VerticalOptions="Center" />
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                                <Label Text="{Binding Name}" Style="{StaticResource ItemTitle}" FontSize="14" />
+                                                <Label Text="{Binding Meta}" Style="{StaticResource Muted}" FontSize="12" />
+                                            </VerticalStackLayout>
+                                            <Path Grid.Column="2" Style="{StaticResource AccentIcon}" Scale="0.85"
+                                                  Data="M21 15 L21 19 C21 20.1 20.1 21 19 21 L5 21 C3.9 21 3 20.1 3 19 L3 15 M7 10 L12 15 L17 10 M12 15 L12 3" />
+                                        </Grid>
+                                    </Border>
+                                </SwipeView>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
+
+                    <!-- comenzi PC: aceleași ca în pagina web, la final, departe de upload -->
+                    <CollectionView.Footer>
+                        <VerticalStackLayout Padding="20,18,20,36" Spacing="12">
+                            <Label Text="Comenzi PC" Style="{StaticResource Heading}" Margin="2,0,0,0" />
+                            <Grid ColumnDefinitions="*,*,*,*" ColumnSpacing="10">
+                                <Border Grid.Column="0" Style="{StaticResource Card}" Padding="0,14" ClassId="lock">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="Power_Tapped" />
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Path Style="{StaticResource Icon}"
+                                              Data="M5 11 L19 11 C20.1 11 21 11.9 21 13 L21 20 C21 21.1 20.1 22 19 22 L5 22 C3.9 22 3 21.1 3 20 L3 13 C3 11.9 3.9 11 5 11 Z M7 11 L7 7 C7 4.2 9.2 2 12 2 C14.8 2 17 4.2 17 7 L17 11" />
+                                        <Label Text="Blochează" FontSize="12" HorizontalOptions="Center" />
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Border Grid.Column="1" Style="{StaticResource Card}" Padding="0,14" ClassId="sleep">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="Power_Tapped" />
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Path Style="{StaticResource Icon}"
+                                              Data="M12 3 A6 6 0 0 0 21 12 A9 9 0 1 1 12 3 Z" />
+                                        <Label Text="Sleep" FontSize="12" HorizontalOptions="Center" />
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Border Grid.Column="2" Style="{StaticResource Card}" Padding="0,14" ClassId="restart">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="Power_Tapped" />
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Path Style="{StaticResource Icon}" Stroke="{StaticResource Warn}"
+                                              Data="M21 12 A9 9 0 1 1 12 3 C14.52 3 16.93 4 18.74 5.74 L21 8 M21 3 L21 8 L16 8" />
+                                        <Label Text="Restart" FontSize="12" HorizontalOptions="Center" />
+                                    </VerticalStackLayout>
+                                </Border>
+                                <Border Grid.Column="3" Style="{StaticResource Card}" Padding="0,14" ClassId="shutdown">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="Power_Tapped" />
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="6">
+                                        <Path Style="{StaticResource Icon}" Stroke="{StaticResource Danger}"
+                                              Data="M12 2 L12 12 M18.36 6.64 A9 9 0 1 1 5.64 6.64" />
+                                        <Label Text="Închide" FontSize="12" HorizontalOptions="Center" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </Grid>
+                            <Button x:Name="AbortButton" Text="Anulează închiderea" Style="{StaticResource DangerButton}"
+                                    Clicked="Abort_Clicked" IsVisible="False" />
+                            <Label x:Name="PowerMsg" Style="{StaticResource Muted}" HorizontalTextAlignment="Center"
+                                   IsVisible="False" />
+                        </VerticalStackLayout>
+                    </CollectionView.Footer>
                 </CollectionView>
             </RefreshView>
-
-            <!-- comenzi PC: aceleași ca în pagina web -->
-            <VerticalStackLayout Grid.Row="4" Spacing="6">
-                <Label Text="COMENZI PC" FontSize="11" TextColor="Gray" CharacterSpacing="1.2"/>
-                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="6" RowSpacing="6">
-                    <Button Grid.Row="0" Grid.Column="0" Text="🔒 Blochează"
-                            Clicked="Power_Clicked" ClassId="lock"
-                            BackgroundColor="Transparent" BorderColor="Gray" BorderWidth="1" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
-                    <Button Grid.Row="0" Grid.Column="1" Text="🌙 Sleep"
-                            Clicked="Power_Clicked" ClassId="sleep"
-                            BackgroundColor="Transparent" BorderColor="Gray" BorderWidth="1" TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
-                    <Button Grid.Row="1" Grid.Column="0" Text="🔄 Restart"
-                            Clicked="Power_Clicked" ClassId="restart"
-                            BackgroundColor="Transparent" BorderColor="#dc2626" BorderWidth="1" TextColor="#dc2626"/>
-                    <Button Grid.Row="1" Grid.Column="1" Text="⏻ Închide"
-                            Clicked="Power_Clicked" ClassId="shutdown"
-                            BackgroundColor="Transparent" BorderColor="#dc2626" BorderWidth="1" TextColor="#dc2626"/>
-                    <Button Grid.Row="2" Grid.ColumnSpan="2" x:Name="AbortButton" Text="✋ Anulează închiderea"
-                            Clicked="Power_Clicked" ClassId="abort"
-                            BackgroundColor="#dc2626" TextColor="White" IsVisible="False"/>
-                </Grid>
-                <Label x:Name="PowerMsg" FontSize="13" TextColor="Gray"/>
-            </VerticalStackLayout>
-
-            <Button Grid.Row="5" Text="Deconectează" Clicked="Unpair_Clicked"
-                    BackgroundColor="Transparent" TextColor="Red" FontSize="13"/>
         </Grid>
 
     </Grid>

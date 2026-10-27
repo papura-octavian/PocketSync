@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PocketSync.Mobile.AddPcPage"
+             Shell.NavBarIsVisible="False"
+             SafeAreaEdges="All"
+             Title="Adaugă un PC">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- antet -->
+        <Grid Padding="20,14,20,10" ColumnDefinitions="Auto,*" ColumnSpacing="14">
+            <Border Style="{StaticResource IconButton}" VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Back_Tapped" />
+                </Border.GestureRecognizers>
+                <Path Style="{StaticResource Icon}" Data="M19 12 L5 12 M12 19 L5 12 L12 5" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                <Label Text="Adaugă un PC" Style="{StaticResource Title}" FontSize="24" />
+                <Label Text="Sau actualizează unul care și-a schimbat adresa." Style="{StaticResource Muted}" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20,6,20,28" Spacing="18">
+
+                <!-- camera: vizorul e pus din cod, doar pe Android (vezi AddPcPage.xaml.cs) -->
+                <Border StrokeThickness="0" StrokeShape="RoundRectangle 26" HeightRequest="340"
+                        BackgroundColor="#0B0C10">
+                    <Grid>
+                        <ContentView x:Name="CameraHost" />
+
+                        <!-- ramă de încadrare peste imaginea camerei -->
+                        <Border x:Name="ScanFrame" WidthRequest="210" HeightRequest="210" StrokeThickness="3"
+                                Stroke="#E6FFFFFF" StrokeShape="RoundRectangle 22" BackgroundColor="Transparent"
+                                HorizontalOptions="Center" VerticalOptions="Center" InputTransparent="True" />
+
+                        <!-- fără cameră (permisiune refuzată / necompatibil) -->
+                        <VerticalStackLayout x:Name="CameraOff" IsVisible="False" Spacing="12" Padding="28"
+                                             VerticalOptions="Center">
+                            <Path Style="{StaticResource Icon}" Stroke="White"
+                                  Data="M3 7 L3 5 C3 3.9 3.9 3 5 3 L7 3 M17 3 L19 3 C20.1 3 21 3.9 21 5 L21 7 M21 17 L21 19 C21 20.1 20.1 21 19 21 L17 21 M7 21 L5 21 C3.9 21 3 20.1 3 19 L3 17 M7 12 L17 12" />
+                            <Label x:Name="CameraOffText" TextColor="White" HorizontalTextAlignment="Center" FontSize="14"
+                                   Text="Camera nu e disponibilă. Poți lipi link-ul mai jos." />
+                            <Button x:Name="CameraRetryButton" Text="Permite camera" Style="{StaticResource HeroButton}"
+                                    HorizontalOptions="Center" Clicked="CameraRetry_Clicked" />
+                        </VerticalStackLayout>
+
+                        <!-- se conectează -->
+                        <Grid x:Name="BusyOverlay" IsVisible="False" BackgroundColor="#B30B0C10">
+                            <VerticalStackLayout Spacing="12" VerticalOptions="Center">
+                                <ActivityIndicator IsRunning="True" Color="White" />
+                                <Label Text="Se conectează la PC..." TextColor="White" HorizontalOptions="Center" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Grid>
+                </Border>
+
+                <Label Text="Pe PC, deschide PocketSync din tray și îndreaptă camera spre codul QR din fereastră."
+                       Style="{StaticResource Muted}" FontSize="14" HorizontalTextAlignment="Center" />
+
+                <!-- mesaj de eroare -->
+                <Border x:Name="ErrorPanel" IsVisible="False" Style="{StaticResource Card}" Padding="14"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource DangerSoftLight}, Dark={StaticResource DangerSoftDark}}"
+                        Stroke="Transparent">
+                    <Label x:Name="ErrorLabel" TextColor="{StaticResource Danger}" FontSize="14" />
+                </Border>
+
+                <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12" Margin="0,4">
+                    <BoxView HeightRequest="1" VerticalOptions="Center"
+                             Color="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
+                    <Label Grid.Column="1" Text="SAU LIPEȘTE LINK-UL" Style="{StaticResource Overline}" />
+                    <BoxView Grid.Column="2" HeightRequest="1" VerticalOptions="Center"
+                             Color="{AppThemeBinding Light={StaticResource BorderLight}, Dark={StaticResource BorderDark}}" />
+                </Grid>
+
+                <Border Style="{StaticResource InputBox}">
+                    <Entry x:Name="LinkEntry" Placeholder="http://192.168.x.x:5000/?token=..."
+                           Keyboard="Url" ClearButtonVisibility="WhileEditing" FontSize="14"
+                           BackgroundColor="Transparent" ReturnType="Go" Completed="Connect_Clicked" />
+                </Border>
+                <Label Text="Pe PC: „Copiază link” în fereastra PocketSync, apoi trimite-ți-l pe telefon."
+                       Style="{StaticResource Muted}" FontSize="12" Margin="4,-10,4,0" />
+
+                <Button x:Name="ConnectButton" Text="Conectează" Style="{StaticResource PrimaryButton}"
+                        Clicked="Connect_Clicked" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

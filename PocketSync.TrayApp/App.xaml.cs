@@ -29,6 +29,7 @@ public partial class App : System.Windows.Application
                 retainedFileCountLimit: 7)
             .CreateLogger();
 
+        ThemeManager.Initialize();
         Settings = TrayAppSettings.Load();
         Server = new PocketSyncServer(new ServerConfig
         {

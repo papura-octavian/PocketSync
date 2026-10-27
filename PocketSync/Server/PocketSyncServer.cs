@@ -11,6 +11,8 @@ namespace PocketSync.Server;
 /// </summary>
 public sealed class PocketSyncServer
 {
+    public const string Version = "1.1";
+
     private WebApplication? _app;
     private readonly ServerConfig _overrides;
     private readonly ConcurrentDictionary<Guid, string> _fileMap = new();
@@ -62,7 +64,8 @@ public sealed class PocketSyncServer
 
         var configFolder = _overrides.BasePath
             ?? builder.Configuration["PocketSync:StorageFolder"];
-        BasePath = string.IsNullOrEmpty(configFolder) ? ServerConfig.DefaultBasePath() : configFolder;
+        // GetFullPath: normalizează "/" în "\" — verificarea de la upload compară căi rezolvate
+        BasePath = Path.GetFullPath(string.IsNullOrEmpty(configFolder) ? ServerConfig.DefaultBasePath() : configFolder);
 
         ReceivedDir = Path.Combine(BasePath, "Received");
         StorageDir = Path.Combine(BasePath, "Storage");
@@ -158,8 +161,18 @@ public sealed class PocketSyncServer
         app.MapGet("/api/status", () => new
         {
             ok = true,
-            version = "1.0",
-            name = Environment.MachineName
+            version = Version,
+            name = Environment.MachineName,
+            id = PcIdentity.Id
+        });
+
+        // ca /api/status, dar autentificat: aplicația îl folosește la pairing ca să verifice
+        // că tokenul e bun (status e public, deci ar spune "ok" și cu un token greșit)
+        app.MapGet("/api/device", () => new
+        {
+            version = Version,
+            name = Environment.MachineName,
+            id = PcIdentity.Id
         });
 
         app.MapPost("/api/upload", async (HttpRequest request) =>

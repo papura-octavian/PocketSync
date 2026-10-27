@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:PocketSync.Mobile"
+             x:Class="PocketSync.Mobile.DevicesPage"
+             Shell.NavBarIsVisible="False"
+             SafeAreaEdges="Container"
+             Title="PC-urile mele">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- antet -->
+        <Grid Padding="20,14,20,10" ColumnDefinitions="Auto,*" ColumnSpacing="14">
+            <Border Style="{StaticResource IconButton}" VerticalOptions="Center">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="Back_Tapped" />
+                </Border.GestureRecognizers>
+                <Path Style="{StaticResource Icon}" Data="M19 12 L5 12 M12 19 L5 12 L12 5" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" Spacing="0" VerticalOptions="Center">
+                <Label Text="PC-urile mele" Style="{StaticResource Title}" FontSize="24" />
+                <Label Text="Atinge un PC ca să transferi cu el." Style="{StaticResource Muted}" />
+            </VerticalStackLayout>
+        </Grid>
+
+        <CollectionView Grid.Row="1" x:Name="DevicesList" SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="local:DeviceRow">
+                    <Grid Padding="20,6">
+                        <Border Style="{StaticResource Card}" Padding="14"
+                                Stroke="{Binding CardStroke}" StrokeThickness="{Binding CardStrokeThickness}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="Device_Tapped" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                                <Border Style="{StaticResource IconTile}" WidthRequest="50" HeightRequest="50">
+                                    <Path Style="{StaticResource AccentIcon}"
+                                          Data="M4 6 C4 4.9 4.9 4 6 4 L18 4 C19.1 4 20 4.9 20 6 L20 15 L4 15 Z M2 19 L22 19" />
+                                </Border>
+
+                                <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                    <HorizontalStackLayout Spacing="8">
+                                        <Label Text="{Binding Name}" Style="{StaticResource ItemTitle}" FontSize="16"
+                                               MaximumWidthRequest="170" />
+                                        <Border IsVisible="{Binding IsActive}" StrokeThickness="0" Padding="8,2"
+                                                StrokeShape="RoundRectangle 8" VerticalOptions="Center"
+                                                BackgroundColor="{AppThemeBinding Light={StaticResource AccentSoftLight}, Dark={StaticResource AccentSoftDark}}">
+                                            <Label Text="ACTIV" FontSize="10" FontFamily="OpenSansSemibold" CharacterSpacing="0.8"
+                                                   TextColor="{AppThemeBinding Light={StaticResource Accent}, Dark={StaticResource AccentLight}}" />
+                                        </Border>
+                                    </HorizontalStackLayout>
+                                    <Label Text="{Binding Host}" Style="{StaticResource Muted}" FontSize="12" />
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Ellipse WidthRequest="8" HeightRequest="8" Fill="{Binding StateColor}" VerticalOptions="Center" />
+                                        <Label Text="{Binding StateText}" Style="{StaticResource Muted}" FontSize="12" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+
+                                <Border Grid.Column="2" Style="{StaticResource IconButton}" VerticalOptions="Center"
+                                        BackgroundColor="Transparent" Stroke="Transparent">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="More_Tapped" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="⋮" FontSize="22" FontAttributes="Bold" HorizontalOptions="Center" VerticalOptions="Center"
+                                           TextColor="{AppThemeBinding Light={StaticResource MutedLight}, Dark={StaticResource MutedDark}}" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="40,60" Spacing="8">
+                    <Label Text="Niciun PC legat" Style="{StaticResource ItemTitle}" HorizontalOptions="Center" />
+                    <Label Text="Adaugă primul PC scanând codul QR din fereastra PocketSync."
+                           Style="{StaticResource Muted}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+        </CollectionView>
+
+        <Button Grid.Row="2" Text="＋  Adaugă un PC" Style="{StaticResource PrimaryButton}"
+                Margin="20,8,20,20" Clicked="Add_Clicked" />
+    </Grid>
+</ContentPage>

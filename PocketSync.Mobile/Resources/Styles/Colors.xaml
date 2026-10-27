@@ -1,22 +1,50 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
-<ResourceDictionary 
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+    <!-- paleta PocketSync: violet → albastru, din iconul aplicației -->
+    <Color x:Key="Accent">#6366F1</Color>
+    <Color x:Key="AccentLight">#8B8DF7</Color>
+    <Color x:Key="GradientStart">#B46FD0</Color>
+    <Color x:Key="GradientEnd">#5B7FE0</Color>
+
+    <Color x:Key="BgLight">#F4F5FA</Color>
+    <Color x:Key="BgDark">#0E1015</Color>
+    <Color x:Key="CardLight">#FFFFFF</Color>
+    <Color x:Key="CardDark">#181B23</Color>
+    <Color x:Key="FillLight">#EEF0F6</Color>
+    <Color x:Key="FillDark">#222631</Color>
+    <Color x:Key="BorderLight">#E5E7EF</Color>
+    <Color x:Key="BorderDark">#272B36</Color>
+    <Color x:Key="TextLight">#14161C</Color>
+    <Color x:Key="TextDark">#ECEDF2</Color>
+    <Color x:Key="MutedLight">#6B7080</Color>
+    <Color x:Key="MutedDark">#969CAA</Color>
+    <Color x:Key="AccentSoftLight">#ECEDFE</Color>
+    <Color x:Key="AccentSoftDark">#252848</Color>
+
+    <Color x:Key="Ok">#22C55E</Color>
+    <Color x:Key="Warn">#F59E0B</Color>
+    <Color x:Key="Danger">#EF4444</Color>
+    <Color x:Key="DangerSoftLight">#FDECEC</Color>
+    <Color x:Key="DangerSoftDark">#3A1E22</Color>
+
+    <!-- cheile din template-ul MAUI, folosite de Styles.xaml — aliniate la paleta de mai sus -->
+    <Color x:Key="Primary">#6366F1</Color>
+    <Color x:Key="PrimaryDark">#8B8DF7</Color>
+    <Color x:Key="PrimaryDarkText">#0E1015</Color>
+    <Color x:Key="Secondary">#ECEDFE</Color>
+    <Color x:Key="SecondaryDarkText">#8B8DF7</Color>
+    <Color x:Key="Tertiary">#4338CA</Color>
 
     <Color x:Key="White">White</Color>
     <Color x:Key="Black">Black</Color>
     <Color x:Key="Magenta">#D600AA</Color>
     <Color x:Key="MidnightBlue">#190649</Color>
-    <Color x:Key="OffBlack">#1f1f1f</Color>
+    <Color x:Key="OffBlack">#0E1015</Color>
 
     <Color x:Key="Gray100">#E1E1E1</Color>
     <Color x:Key="Gray200">#C8C8C8</Color>

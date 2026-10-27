@@ -13,6 +13,8 @@ public static class ShareQueue
 
     public static event Action? ItemsArrived;
 
+    public static int Count { get { lock (Items) return Items.Count; } }
+
     public static void Add(IEnumerable<SharedItem> items)
     {
         lock (Items) Items.AddRange(items);

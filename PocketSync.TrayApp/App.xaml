@@ -4,4 +4,12 @@
              ShutdownMode="OnExplicitShutdown">
     <!-- OnExplicitShutdown: altfel aplicația moare când ascunzi fereastra
          și rămâne un icon fantomă în tray -->
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- tema (Light/Dark.xaml) se adaugă din cod, la pornire — ThemeManager -->
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Themes/Controls.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
 </Application>
